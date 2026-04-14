@@ -10,15 +10,13 @@ category: Field Notes
 
 ## 事故
 
-2026 年 4 月 2 日。三个 subagent 正在并行修复 PR comments。执行 `openclaw gateway restart`。
+2026 年 4 月 2 日。多个 subagent 正在并行修复 PR comments。执行 `openclaw gateway restart`。
 
-重启完成后检查 `subagents list`——三个 subagent 状态仍显示 **running**。
+重启完成后检查 `subagents list`——subagent 状态仍显示 **running**。
 
-看起来一切正常。于是继续做其他事。
+看起来一切正常。但实际上，这些 subagent 在 gateway 重启的瞬间就断连了，状态却没有更新。直到发现输出长时间没有变化，才意识到它们已经停了。
 
-**一个小时后**才发现：三个 subagent 的输出没有任何变化。它们在 gateway 重启的瞬间就断连了，但状态没有更新。
-
-一个小时的空转。三个任务需要重新派发。
+被中断的任务需要全部重新派发。
 
 ## 根因
 
