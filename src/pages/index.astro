@@ -1,0 +1,60 @@
+---
+import PostCard from "../components/PostCard.astro";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { getPostUrlBySlug } from "@utils/url-utils";
+import { getSortedPosts } from "../utils/content-utils";
+
+const allPosts = await getSortedPosts();
+
+const sections = [
+  {
+    title: "🔥 Agent 时代经验",
+    desc: "从 18 天实战中提炼的方法论",
+    slugs: ["agent-era-software-engineering", "agent-era-project-management", "agent-era-team-collaboration", "from-one-to-ten", "pain-points", "borrowing-and-absorption"],
+  },
+  {
+    title: "⚙️ 工程体系",
+    desc: "工作流、审查、调度、Skill 的设计与实践",
+    slugs: ["workflow-engine", "review-standards", "dispatch-patterns", "expert-skills", "auto-retro", "review-loop-control"],
+  },
+  {
+    title: "📝 实战笔记",
+    desc: "具体场景的踩坑与解法",
+    slugs: ["gui-automation", "memory-system", "gateway-restart"],
+  },
+];
+
+const grouped = sections.map(s => ({
+  ...s,
+  posts: s.slugs.map(slug => allPosts.find((p: any) => p.slug === slug)).filter(Boolean),
+}));
+
+let delay = 0;
+const interval = 50;
+---
+
+<MainGridLayout>
+  {grouped.map((section) => (
+    <div class="mb-8">
+      <div class="mb-4 px-2 onload-animation" style={`animation-delay: calc(var(--content-delay) + ${(delay++) * interval}ms)`}>
+        <h2 class="text-2xl font-bold text-75">{section.title}</h2>
+        <p class="text-sm text-50 mt-1">{section.desc}</p>
+      </div>
+      <div class="transition flex flex-col rounded-[var(--radius-large)] bg-[var(--card-bg)] py-1 md:py-0 md:bg-transparent md:gap-4">
+        {section.posts.map((entry: any) => (
+          <PostCard
+            entry={entry}
+            title={entry.data.title}
+            tags={entry.data.tags}
+            category={entry.data.category}
+            published={entry.data.published}
+            updated={entry.data.updated}
+            url={getPostUrlBySlug(entry.slug)}
+            style={`animation-delay: calc(var(--content-delay) + ${(delay++) * interval}ms)`}
+            class="onload-animation"
+          />
+        ))}
+      </div>
+    </div>
+  ))}
+</MainGridLayout>
