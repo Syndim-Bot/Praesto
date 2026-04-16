@@ -12,7 +12,7 @@ const categoryMap: Record<string, { label: string; icon: string; order: number }
   "Workflow": { label: "工程体系", icon: "⚙️", order: 2 },
   "Quality": { label: "工程体系", icon: "⚙️", order: 2 },
   "Dispatch": { label: "工程体系", icon: "⚙️", order: 2 },
-  "Skills": { label: "工程体系", icon: "⚙️", order: 2 },
+  "Skills": { label: "技能体系", icon: "🎓", order: 3 },
 };
 
 // 按 tab 分组
@@ -32,11 +32,12 @@ allPosts.forEach((post: any) => {
 const tabs = [
   { id: "thinking", ...tabGroups["思考分享"] || { label: "思考分享", icon: "🔥", posts: [] } },
   { id: "engineering", ...tabGroups["工程体系"] || { label: "工程体系", icon: "⚙️", posts: [] } },
+  { id: "skills", ...tabGroups["技能体系"] || { label: "技能体系", icon: "🎓", posts: [] } },
 ];
 
 // 如果有其他分类
 Object.entries(tabGroups).forEach(([key, val]) => {
-  if (key !== "思考分享" && key !== "工程体系") {
+  if (key !== "思考分享" && key !== "工程体系" && key !== "技能体系") {
     tabs.push({ id: key, ...val });
   }
 });
