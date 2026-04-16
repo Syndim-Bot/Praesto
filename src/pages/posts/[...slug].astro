@@ -173,7 +173,7 @@ const jsonLd = {
   const likedKey = "liked:" + slug;
   if (metaLikes) {
     if (localStorage.getItem(likedKey)) {
-      metaLikes.style.opacity = "0.5";
+      metaLikes.querySelector("svg, .iconify").style.color = "#ef4444";
       metaLikes.title = "已喜爱";
     }
     metaLikes.addEventListener("click", () => {
@@ -184,7 +184,7 @@ const jsonLd = {
           const el = document.getElementById("meta-likes-count");
           if (el) el.textContent = res.likes;
           localStorage.setItem(likedKey, "1");
-          metaLikes.style.opacity = "0.5";
+          metaLikes.querySelector("svg, .iconify").style.color = "#ef4444";
           metaLikes.title = "已喜爱";
         })
         .catch(() => {});

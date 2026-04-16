@@ -134,8 +134,8 @@ function loadPostStats() {
         const likeBtn = document.createElement("button");
         const likedKey = "liked:" + slug;
         const liked = localStorage.getItem(likedKey);
-        likeBtn.className = "flex items-center gap-1 px-2 py-0.5 rounded-full transition cursor-pointer " + 
-          (liked ? "opacity-50" : "hover:bg-[var(--btn-regular-bg)]");
+        likeBtn.className = "flex items-center gap-1 px-2 py-0.5 rounded-full transition cursor-pointer hover:bg-[var(--btn-regular-bg)]";
+        if (liked) likeBtn.style.color = "#ef4444";
         likeBtn.innerHTML = "❤️ <span class=\"like-count\">" + (d.likes || 0) + "</span>";
         if (liked) likeBtn.title = "已喜爱";
         
@@ -148,7 +148,7 @@ function loadPostStats() {
             .then(res => {
               likeBtn.querySelector(".like-count").textContent = res.likes;
               localStorage.setItem(likedKey, "1");
-              likeBtn.classList.add("opacity-50");
+              likeBtn.style.color = "#ef4444";
               likeBtn.title = "已喜爱";
               // 更新全站计数
               const sl = document.getElementById("site-likes");
