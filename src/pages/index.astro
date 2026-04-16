@@ -122,13 +122,43 @@ function loadPostStats() {
     fetch(STATS_API + "/stats/" + slug)
       .then(r => r.json())
       .then(d => {
-        const meta = card.querySelector(".text-50.text-sm");
-        if (meta) {
-          const stats = document.createElement("span");
-          stats.className = "ml-2 text-xs";
-          stats.textContent = "👀 " + (d.views || 0) + "  ❤️ " + (d.likes || 0);
-          meta.appendChild(stats);
-        }
+        // 找卡片底部区域
+        const container = card.querySelector(".post-card-info, .flex.flex-wrap") || card;
+        const row = document.createElement("div");
+        row.className = "flex items-center gap-3 mt-2 text-xs text-50";
+        
+        // 阅读量
+        row.innerHTML = '<span>👀 ' + (d.views || 0) + '</span>';
+        
+        // 点赞按钮
+        const likeBtn = document.createElement("button");
+        const likedKey = "liked:" + slug;
+        const liked = localStorage.getItem(likedKey);
+        likeBtn.className = "flex items-center gap-1 px-2 py-0.5 rounded-full transition cursor-pointer " + 
+          (liked ? "opacity-50" : "hover:bg-[var(--btn-regular-bg)]");
+        likeBtn.innerHTML = "❤️ <span class=\"like-count\">" + (d.likes || 0) + "</span>";
+        if (liked) likeBtn.title = "已喜爱";
+        
+        likeBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (localStorage.getItem(likedKey)) return;
+          fetch(STATS_API + "/like/" + slug, { method: "POST" })
+            .then(r => r.json())
+            .then(res => {
+              likeBtn.querySelector(".like-count").textContent = res.likes;
+              localStorage.setItem(likedKey, "1");
+              likeBtn.classList.add("opacity-50");
+              likeBtn.title = "已喜爱";
+              // 更新全站计数
+              const sl = document.getElementById("site-likes");
+              if (sl) sl.textContent = parseInt(sl.textContent || "0") + 1;
+            })
+            .catch(() => {});
+        });
+        
+        row.appendChild(likeBtn);
+        container.appendChild(row);
       })
       .catch(() => {});
   });
