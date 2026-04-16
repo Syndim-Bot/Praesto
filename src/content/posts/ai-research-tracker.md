@@ -3,7 +3,7 @@ title: 用 Skill + Cron 搭一套自迭代的 AI 前沿日报系统
 published: 2026-04-16
 description: 从 6 个数据源采集 184 篇论文，筛选 Top 30，映射到 4 条产品线，核心技术自动沉淀到 agent 知识库。附首次执行的真实数据和踩坑记录。
 tags: [AI Research, Cron, Skill, Self-Iteration, Automation]
-category: Automation
+category: Workflow
 ---
 
 > 你不可能每天手动刷 arXiv。但你可以让 agent 帮你刷——然后让它自己决定明天该多关注什么。
