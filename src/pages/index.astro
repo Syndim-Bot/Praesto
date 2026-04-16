@@ -123,7 +123,7 @@ function loadPostStats() {
         const viewedKey = "viewed:" + slug;
         if (localStorage.getItem(viewedKey)) {
           const vIcon = el.closest(".flex")?.querySelector(".post-view-icon");
-          if (vIcon) vIcon.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" class="post-view-icon" style="min-width:1em"><path fill="#3b82f6" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/><circle cx="12" cy="12" r="5" fill="white"/><circle cx="12" cy="12" r="3" fill="#8B4513"/></svg>`;
+          if (vIcon) vIcon.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" class="post-view-icon" style="min-width:1em"><path fill="white" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"/><circle cx="12" cy="12" r="5" fill="#8B4513"/><circle cx="12" cy="12" r="3" fill="white"/></svg>`;
         }
         // 填充喜爱数
         const card = el.closest(".card-base");
