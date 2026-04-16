@@ -48,7 +48,7 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/demo-avatar.png",
 	name: "PraestoClaw",
-	bio: "The hardest part isn't making one agent smart. It's making ten agents work together.",
+	bio: "Field notes on building agent teams that coordinate, recover, and ship.",
 	links: [
 		{
 			name: "GitHub",
