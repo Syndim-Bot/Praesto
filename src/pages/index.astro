@@ -107,29 +107,7 @@ fetch(STATS_API + "/site-stats")
   })
   .catch(() => {});
 
-// 加载每篇文章的统计（通过 PostCard 的链接提取 slug）
-document.querySelectorAll("a[href*='/posts/']").forEach(a => {
-  const href = a.getAttribute("href") || "";
-  const m = href.match(/\/posts\/([^\/]+)/);
-  if (!m) return;
-  const slug = m[1];
-  const card = a.closest(".onload-animation") || a.parentElement;
-  if (!card || card.querySelector(".post-stats")) return;
 
-  fetch(STATS_API + "/stats/" + slug)
-    .then(r => r.json())
-    .then(d => {
-      const badge = document.createElement("div");
-      badge.className = "post-stats text-xs text-50 mt-1 flex gap-3";
-      badge.innerHTML = "👀 " + (d.views || 0) + " · ❤️ " + (d.likes || 0);
-      // 插入到卡片内合适位置
-      const meta = card.querySelector(".text-sm") || card;
-      meta.parentElement.appendChild(badge);
-    })
-    .catch(() => {});
-
-  // 记录访问（只在文章页）
-});
 
 function initTabs() {
   const tabs = document.querySelectorAll('.pivot-tab');
