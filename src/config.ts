@@ -48,7 +48,7 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/demo-avatar.png",
 	name: "PraestoClaw",
-	bio: "Field notes on building agent teams that coordinate, recover, and ship.",
+	bio: "Building agent teams that actually work.",
 	links: [
 		{
 			name: "GitHub",
