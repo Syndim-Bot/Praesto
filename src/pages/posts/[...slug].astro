@@ -147,10 +147,9 @@ const jsonLd = {
 
 
 
-<script define:vars={{ statsApi: "https://praesto-stats.ou-gaochang.workers.dev" }}>
+<script define:vars={{ statsApi: "https://praesto-stats.ou-gaochang.workers.dev", filledHeart: `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" style="color:#ef4444"><path fill="currentColor" d="m12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z"/></svg>` }}>
   const slug = window.location.pathname.replace(/\/Praesto\/posts\//, "").replace(/\/$/, "");
   
-  // 记录访问
   fetch(statsApi + "/view/" + slug, { method: "POST" })
     .then(r => r.json())
     .then(d => {
@@ -159,7 +158,6 @@ const jsonLd = {
     })
     .catch(() => {});
 
-  // 加载喜爱数
   fetch(statsApi + "/stats/" + slug)
     .then(r => r.json())
     .then(d => {
@@ -168,13 +166,12 @@ const jsonLd = {
     })
     .catch(() => {});
 
-  // 点赞
   const metaLikes = document.getElementById("meta-likes");
   const likedKey = "liked:" + slug;
   if (metaLikes) {
     if (localStorage.getItem(likedKey)) {
-      metaLikes.querySelector("svg, .iconify").style.color = "#ef4444";
-      metaLikes.title = "已喜爱";
+      const icon = metaLikes.querySelector("svg");
+      if (icon) icon.outerHTML = filledHeart;
     }
     metaLikes.addEventListener("click", () => {
       if (localStorage.getItem(likedKey)) return;
@@ -184,8 +181,8 @@ const jsonLd = {
           const el = document.getElementById("meta-likes-count");
           if (el) el.textContent = res.likes;
           localStorage.setItem(likedKey, "1");
-          metaLikes.querySelector("svg, .iconify").style.color = "#ef4444";
-          metaLikes.title = "已喜爱";
+          const icon = metaLikes.querySelector("svg");
+          if (icon) icon.outerHTML = filledHeart;
         })
         .catch(() => {});
     });
