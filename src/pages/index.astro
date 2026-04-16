@@ -6,31 +6,40 @@ import { getSortedPosts } from "../utils/content-utils";
 
 const allPosts = await getSortedPosts();
 
+// 按 category 自动分组，不再硬编码 slug
+const categoryMap: Record<string, { label: string; icon: string; order: number }> = {
+  "Field Notes": { label: "思考分享", icon: "🔥", order: 1 },
+  "Workflow": { label: "工程体系", icon: "⚙️", order: 2 },
+  "Quality": { label: "工程体系", icon: "⚙️", order: 2 },
+  "Dispatch": { label: "工程体系", icon: "⚙️", order: 2 },
+  "Skills": { label: "工程体系", icon: "⚙️", order: 2 },
+};
+
+// 按 tab 分组
+const tabGroups: Record<string, { label: string; icon: string; posts: any[] }> = {};
+
+allPosts.forEach((post: any) => {
+  const cat = post.data.category || "其他";
+  const mapped = categoryMap[cat] || { label: "📦 其他", icon: "📦", order: 99 };
+  const key = mapped.label;
+  if (!tabGroups[key]) {
+    tabGroups[key] = { label: mapped.label, icon: mapped.icon, posts: [] };
+  }
+  tabGroups[key].posts.push(post);
+});
+
+// 固定顺序
 const tabs = [
-  {
-    id: "thinking",
-    label: "思考分享",
-    icon: "🔥",
-    slugs: ["agent-era-software-engineering", "agent-era-project-management", "agent-era-team-collaboration", "from-one-to-ten", "pain-points", "borrowing-and-absorption"],
-  },
-  {
-    id: "engineering",
-    label: "工程体系",
-    icon: "⚙️",
-    slugs: ["workflow-engine", "review-standards", "dispatch-patterns", "expert-skills", "auto-retro", "review-loop-control"],
-  },
-  {
-    id: "fieldnotes",
-    label: "实战笔记",
-    icon: "📝",
-    slugs: ["gui-automation", "memory-system", "gateway-restart"],
-  },
+  { id: "thinking", ...tabGroups["思考分享"] || { label: "思考分享", icon: "🔥", posts: [] } },
+  { id: "engineering", ...tabGroups["工程体系"] || { label: "工程体系", icon: "⚙️", posts: [] } },
 ];
 
-const grouped = tabs.map(t => ({
-  ...t,
-  posts: t.slugs.map(slug => allPosts.find((p: any) => p.slug === slug)).filter(Boolean),
-}));
+// 如果有其他分类
+Object.entries(tabGroups).forEach(([key, val]) => {
+  if (key !== "思考分享" && key !== "工程体系") {
+    tabs.push({ id: key, ...val });
+  }
+});
 
 let delay = 0;
 const interval = 50;
@@ -47,18 +56,18 @@ const interval = 50;
         ]}
         data-tab={tab.id}
       >
-        <span class="mr-1">{tab.icon}</span>{tab.label}
+        <span class="mr-1">{tab.icon}</span>{tab.label}<span class="ml-1 text-xs opacity-60">({tab.posts.length})</span>
       </button>
     ))}
   </div>
 
   <!-- Tab Content -->
-  {grouped.map((section, sIdx) => (
+  {tabs.map((section, sIdx) => (
     <div
       class:list={["tab-content transition flex flex-col rounded-[var(--radius-large)] bg-[var(--card-bg)] py-1 md:py-0 md:bg-transparent md:gap-4 mb-4", sIdx !== 0 && "hidden"]}
       data-content={section.id}
     >
-      {section.posts.map((entry: any, i: number) => (
+      {section.posts.map((entry: any) => (
         <PostCard
           entry={entry}
           title={entry.data.title}
@@ -76,39 +85,9 @@ const interval = 50;
 </MainGridLayout>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+function initTabs() {
   const tabs = document.querySelectorAll('.pivot-tab');
   const contents = document.querySelectorAll('.tab-content');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.getAttribute('data-tab');
-
-      // Update tabs
-      tabs.forEach(t => {
-        t.classList.remove('active', 'bg-[var(--btn-regular-bg)]', 'text-[var(--primary)]');
-        t.classList.add('text-50');
-      });
-      tab.classList.add('active', 'bg-[var(--btn-regular-bg)]', 'text-[var(--primary)]');
-      tab.classList.remove('text-50');
-
-      // Update content
-      contents.forEach(c => {
-        if (c.getAttribute('data-content') === target) {
-          c.classList.remove('hidden');
-        } else {
-          c.classList.add('hidden');
-        }
-      });
-    });
-  });
-});
-
-// Also handle swup page transitions
-document.addEventListener('swup:page:view', () => {
-  const tabs = document.querySelectorAll('.pivot-tab');
-  const contents = document.querySelectorAll('.tab-content');
-
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const target = tab.getAttribute('data-tab');
@@ -119,13 +98,11 @@ document.addEventListener('swup:page:view', () => {
       tab.classList.add('active', 'bg-[var(--btn-regular-bg)]', 'text-[var(--primary)]');
       tab.classList.remove('text-50');
       contents.forEach(c => {
-        if (c.getAttribute('data-content') === target) {
-          c.classList.remove('hidden');
-        } else {
-          c.classList.add('hidden');
-        }
+        c.classList.toggle('hidden', c.getAttribute('data-content') !== target);
       });
     });
   });
-});
+}
+document.addEventListener('DOMContentLoaded', initTabs);
+document.addEventListener('swup:page:view', initTabs);
 </script>
