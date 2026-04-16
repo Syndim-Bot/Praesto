@@ -110,57 +110,54 @@ fetch(STATS_API + "/site-stats")
 
 
 function loadPostStats() {
-  document.querySelectorAll("a[href*='/posts/']").forEach(a => {
-    const href = a.getAttribute("href") || "";
-    const m = href.match(/\/posts\/([^\/]+)/);
-    if (!m) return;
-    const slug = m[1];
-    const card = a.closest(".onload-animation") || a.parentElement;
-    if (!card || card.dataset.statsLoaded) return;
-    card.dataset.statsLoaded = "1";
-
+  // 加载阅读量
+  document.querySelectorAll(".post-views[data-slug]").forEach(el => {
+    const slug = el.dataset.slug;
+    if (el.dataset.loaded) return;
+    el.dataset.loaded = "1";
     fetch(STATS_API + "/stats/" + slug)
       .then(r => r.json())
       .then(d => {
-        // 找卡片底部区域
-        const container = card.querySelector(".post-card-info, .flex.flex-wrap") || card;
-        const row = document.createElement("div");
-        row.className = "flex items-center gap-3 mt-2 text-xs text-50";
-        
-        // 阅读量
-        row.innerHTML = '<span>👀 ' + (d.views || 0) + '</span>';
-        
-        // 点赞按钮
-        const likeBtn = document.createElement("button");
-        const likedKey = "liked:" + slug;
-        const liked = localStorage.getItem(likedKey);
-        likeBtn.className = "flex items-center gap-1 px-2 py-0.5 rounded-full transition cursor-pointer hover:bg-[var(--btn-regular-bg)]";
-        if (liked) likeBtn.style.color = "#ef4444";
-        likeBtn.innerHTML = "❤️ <span class=\"like-count\">" + (d.likes || 0) + "</span>";
-        if (liked) likeBtn.title = "已喜爱";
-        
-        likeBtn.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (localStorage.getItem(likedKey)) return;
-          fetch(STATS_API + "/like/" + slug, { method: "POST" })
-            .then(r => r.json())
-            .then(res => {
-              likeBtn.querySelector(".like-count").textContent = res.likes;
-              localStorage.setItem(likedKey, "1");
-              likeBtn.style.color = "#ef4444";
-              likeBtn.title = "已喜爱";
-              // 更新全站计数
-              const sl = document.getElementById("site-likes");
-              if (sl) sl.textContent = parseInt(sl.textContent || "0") + 1;
-            })
-            .catch(() => {});
-        });
-        
-        row.appendChild(likeBtn);
-        container.appendChild(row);
+        el.textContent = d.views || 0;
+        // 填充喜爱数
+        const card = el.closest(".card-base");
+        if (card) {
+          const likesEl = card.querySelector(".post-likes");
+          if (likesEl) likesEl.textContent = d.likes || 0;
+          // 如果已点赞，变红
+          const likedKey = "liked:" + slug;
+          if (localStorage.getItem(likedKey)) {
+            const icon = card.querySelector(".post-like-icon");
+            if (icon) icon.style.color = "#ef4444";
+          }
+        }
       })
       .catch(() => {});
+  });
+
+  // 绑定点赞按钮
+  document.querySelectorAll(".post-like-btn[data-slug]").forEach(btn => {
+    if (btn.dataset.bound) return;
+    btn.dataset.bound = "1";
+    const slug = btn.dataset.slug;
+    const likedKey = "liked:" + slug;
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (localStorage.getItem(likedKey)) return;
+      fetch(STATS_API + "/like/" + slug, { method: "POST" })
+        .then(r => r.json())
+        .then(res => {
+          btn.querySelector(".post-likes").textContent = res.likes;
+          localStorage.setItem(likedKey, "1");
+          const icon = btn.querySelector(".post-like-icon");
+          if (icon) icon.style.color = "#ef4444";
+          const sl = document.getElementById("site-likes");
+          if (sl) sl.textContent = parseInt(sl.textContent || "0") + 1;
+        })
+        .catch(() => {});
+    });
   });
 }
 
