@@ -244,7 +244,7 @@ nodes:
     depends_on: [pr-ready-checklist]
     command: |
       git push -u origin fix/{{name}}
-      gh pr create --title "fix: {{name}}" --reviewer Syndim
+      gh pr create --title "fix: {{name}}" --reviewer <reviewer>
 
   - id: retro
     type: agent

@@ -102,7 +102,7 @@ evidence-pack/
 
 ## 效果
 
-4/14 的一次视觉审查（tashuo V7，来自 workflow 报告）：
+4/14 的一次视觉审查（V7，来自 workflow 报告）：
 - 年糕 15 分钟采集 14 页 28 张截图
 - 可乐基于截图 7 分钟完成审查，评分 3.8/5
 - 发现 5 个 P1 问题（场景徽章硬编码渐变色、feedback 状态标签硬编码色值、guardian-bind 提交按钮颜色、data-manage 缺卡片、chat 气泡圆角偏差）

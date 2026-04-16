@@ -91,7 +91,7 @@ category: Workflow
    - MEMORY.md
    - XIAOJIE-DISPATCH.md
    - NIANGAO-EVIDENCE-PACK.md
-   - `.maowo/workflows/defaults/*.yaml`
+   - 工作流 YAML 定义文件
 
 ### 同步更新硬规则
 
