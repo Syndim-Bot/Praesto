@@ -182,7 +182,7 @@ function initTabs() {
       contents.forEach(c => {
         c.classList.toggle('hidden', c.getAttribute('data-content') !== target);
       });
-      history.replaceState(null, '', '#' + target);
+      history.replaceState(null, '', '?tab=' + target);
     });
   });
 }
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs(); 
   loadPostStats();
   // 读取 URL hash 切换 tab
-  const hash = window.location.hash.replace('#', '');
+  const hash = new URLSearchParams(window.location.search).get('tab');
   if (hash) {
     const tab = document.querySelector('.pivot-tab[data-tab="' + hash + '"]');
     if (tab) tab.click();
