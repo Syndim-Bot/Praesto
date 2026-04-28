@@ -79,6 +79,9 @@ const interval = 50;
           category={entry.data.category}
           published={entry.data.published}
           updated={entry.data.updated}
+          image={entry.data.image}
+          description={entry.data.description}
+          draft={entry.data.draft}
           url={getPostUrlBySlug(entry.slug)}
           style={`animation-delay: calc(var(--content-delay) + ${(delay++) * interval}ms)`}
           class="onload-animation"
@@ -118,7 +121,8 @@ fetch(STATS_API + "/site-stats")
 
 function loadPostStats() {
   // 加载阅读量
-  document.querySelectorAll(".post-views[data-slug]").forEach(el => {
+  document.querySelectorAll(".post-views[data-slug]").forEach(rawEl => {
+    const el = rawEl as HTMLElement;
     const slug = el.dataset.slug;
     if (el.dataset.loaded) return;
     el.dataset.loaded = "1";
@@ -151,9 +155,8 @@ function loadPostStats() {
   // 等所有 fetch 完成后按阅读量排序
   setTimeout(() => {
     document.querySelectorAll('.tab-content').forEach(tabContent => {
-      const cards = Array.from(tabContent.children).filter(el => el.classList.contains('card-base') || el.closest('.card-base'));
       // 获取每张卡片的阅读量
-      const cardData = [];
+      const cardData: { card: Element; views: number }[] = [];
       tabContent.querySelectorAll('.post-views[data-slug]').forEach(el => {
         const card = el.closest('.card-base')?.parentElement || el.closest('.onload-animation');
         const views = parseInt(el.textContent) || 0;
@@ -168,7 +171,8 @@ function loadPostStats() {
   }, 1500); // 等 fetch 全部完成
 
   // 绑定点赞按钮
-  document.querySelectorAll(".post-like-btn[data-slug]").forEach(btn => {
+  document.querySelectorAll(".post-like-btn[data-slug]").forEach(rawBtn => {
+    const btn = rawBtn as HTMLElement;
     if (btn.dataset.bound) return;
     btn.dataset.bound = "1";
     const slug = btn.dataset.slug;
@@ -181,12 +185,13 @@ function loadPostStats() {
       fetch(STATS_API + "/like/" + slug, { method: "POST" })
         .then(r => r.json())
         .then(res => {
-          btn.querySelector(".post-likes").textContent = res.likes;
+          const likesEl = btn.querySelector(".post-likes");
+          if (likesEl) likesEl.textContent = res.likes;
           localStorage.setItem(likedKey, "1");
           const icon = btn.querySelector(".post-like-icon");
           if (icon) icon.outerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" class="post-like-icon" style="color:#ef4444;min-width:1em"><path fill="currentColor" d="m12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z"/></svg>`;
           const sl = document.getElementById("site-likes");
-          if (sl) sl.textContent = parseInt(sl.textContent || "0") + 1;
+          if (sl) sl.textContent = String(parseInt(sl.textContent || "0") + 1);
         })
         .catch(() => {});
     });
@@ -218,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 读取 URL hash 切换 tab
   const hash = new URLSearchParams(window.location.search).get('tab');
   if (hash) {
-    const tab = document.querySelector('.pivot-tab[data-tab="' + hash + '"]');
+    const tab = document.querySelector('.pivot-tab[data-tab="' + hash + '"]') as HTMLElement | null;
     if (tab) tab.click();
   }
 });
